@@ -1,0 +1,79 @@
+{
+  "id": "1577785",
+  "name": "classcard",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "657594",
+      "name": "右对齐",
+      "font_class": "youduiqi",
+      "unicode": "e65b",
+      "unicode_decimal": 58971
+    },
+    {
+      "icon_id": "2404492",
+      "name": "下对齐",
+      "font_class": "xiaduiqi",
+      "unicode": "e64b",
+      "unicode_decimal": 58955
+    },
+    {
+      "icon_id": "2684435",
+      "name": "水平居中对齐",
+      "font_class": "shuipingjuzhongduiqi",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    },
+    {
+      "icon_id": "2791240",
+      "name": "左对齐",
+      "font_class": "zuoduiqi",
+      "unicode": "e67f",
+      "unicode_decimal": 59007
+    },
+    {
+      "icon_id": "4297547",
+      "name": "居中对齐",
+      "font_class": "card-text-center",
+      "unicode": "e632",
+      "unicode_decimal": 58930
+    },
+    {
+      "icon_id": "4875059",
+      "name": "上对齐",
+      "font_class": "shangduiqi",
+      "unicode": "e64e",
+      "unicode_decimal": 58958
+    },
+    {
+      "icon_id": "4875066",
+      "name": "左对齐",
+      "font_class": "zuoduiqi2",
+      "unicode": "e650",
+      "unicode_decimal": 58960
+    },
+    {
+      "icon_id": "5003035",
+      "name": "右对齐",
+      "font_class": "youduiqi1",
+      "unicode": "e60e",
+      "unicode_decimal": 58894
+    },
+    {
+      "icon_id": "5003037",
+      "name": "左对齐",
+      "font_class": "zuoduiqi1",
+      "unicode": "e60f",
+      "unicode_decimal": 58895
+    },
+    {
+      "icon_id": "8229624",
+      "name": "垂直居中对齐",
+      "font_class": "chuizhijuzhongduiqi",
+      "unicode": "e670",
+      "unicode_decimal": 58992
+    }
+  ]
+}
