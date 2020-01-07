@@ -14,17 +14,6 @@
       </div>
     </div>
     <div class="main">
-      <div class="left">
-        <el-collapse v-model="expandTypes" @change="expandChange">
-          <el-collapse-item
-            v-for="item in types" :key="item.value" :title="`${item.label}(${item.count})`" :name="item.value">
-            <div
-              @click="handleTagClick(child)"
-              :class="{active: child.uid === tagSelect}"
-              class="type-child-item cursor-p" v-for="(child, i) in item.childs" :key="i">{{child.name}}({{child.total}})</div>
-          </el-collapse-item>
-        </el-collapse>
-      </div>
       <div class="right">
         <div
           @click="handleClickImageItem(i, item)"
@@ -47,7 +36,7 @@
   </div>
 </template>
 <script>
-
+import uuid from 'uuid'
 export default {
   props: {
     // 是否单选
@@ -62,22 +51,33 @@ export default {
   data () {
     return {
       search: '',
-      expandTypes: [1],
-      types: {
-        system: {
-          value: 1,
-          count: 0,
-          label: '系统素材',
-          childs: []
+      imageList: [
+        {
+          uid: uuid(),
+          name: '钢铁侠',
+          path: require('../assets/image/1.jpg')
         },
-        school: {
-          value: 2,
-          label: '本校素材',
-          childs: [],
-          count: 0
+        {
+          uid: uuid(),
+          name: '蜘蛛侠',
+          path: require('../assets/image/2.jpg')
+        },
+        {
+          uid: uuid(),
+          name: '美国队长',
+          path: require('../assets/image/3.jpg')
+        },
+        {
+          uid: uuid(),
+          name: '奇异博士',
+          path: require('../assets/image/4.jpg')
+        },
+        {
+          uid: uuid(),
+          name: '蚁人',
+          path: require('../assets/image/1.jpg')
         }
-      },
-      imageList: [],
+      ],
       activeIndex: -1,
       selectionImage: [],
       selectionImageUids: [],

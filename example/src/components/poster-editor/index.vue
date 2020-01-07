@@ -437,6 +437,14 @@ export default {
         v.style.zIndex = i + 1
       })
     }
+    /* value: {
+      deep: true,
+      handler (val) {
+        if (val.widgetList !== this.widgetList) {
+          this.widgetList = val.widgetList
+        }
+      }
+    } */
   },
   mounted () {
     this.getDZoom()

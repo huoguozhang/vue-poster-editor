@@ -1,0 +1,133 @@
+.width-250{
+  width: 250px !important;
+}
+.width-200{
+  width: 200px !important;
+}
+.width-220{
+  width: 220px !important;
+}
+.addTitle {
+  text-align: left;
+  font-size: 24px;
+  height: 60px;
+  line-height: 60px;
+}
+.card-part{
+  padding: 25px;
+  background: white;
+  box-sizing: border-box;
+}
+.single-row-ellipsis{
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.two-row-ellipsis{
+  overflow : hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.float-left{
+  float: left;
+}
+.float-right{
+  float: right;
+}
+.m-t-20{
+  margin-top: 20px !important;
+}
+.m-t-16{
+  margin-top: 16px !important;
+}
+.m-b-20{
+  margin-bottom: 20px !important;
+}
+.m-b-16{
+  margin-bottom: 16px !important;
+}
+.p-b-20{
+  padding-bottom: 20px !important;
+}
+.m-r-20{
+  margin-right: 20px !important;
+}
+.m-r-16{
+  margin-right: 16px !important;
+}
+.m-l-16{
+  margin-left: 16px !important;
+}
+.m-l-24{
+  margin-left: 24px !important;
+}
+.m-l-20{
+  margin-left: 20px !important;
+}
+.m-t-10{
+  margin-top: 10px !important;
+}
+.m-l-8{
+  margin-left: 8px !important;
+}
+.m-r-8{
+  margin-right: 8px !important;
+}
+.m-b-8{
+  margin-bottom: 8px !important;
+}
+.p-b-24{
+  padding-bottom: 24px !important;
+}
+.p-t-24{
+  padding-top: 24px !important;
+}
+.el-main{
+  background: #f1f3f9 !important;
+}
+.el-tabs--border-card {
+  box-shadow: 0 2px 4px 0 rgba(0,0,0,.05) !important, 0 0 6px 0 rgba(0,0,0,.04) !important;
+}
+.el-tabs{
+  background: #fff;
+}
+.el-tabs__nav{
+  margin-left: 24px !important;
+}
+.el-tabs__header{
+  margin-bottom: 24px !important;
+}
+.el-tabs__nav-wrap::after{
+  height: 1px !important;
+}
+.el-tabs__item{
+  height: 48px !important;
+  line-height: 48px !important;
+}
+.el-dialog__header>.el-dialog__title{
+  color: #fff!important;
+}
+/*数字或英文单词强制换行*/
+.el-tooltip__popper{
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+.toolWrap{
+  display: flex;
+  align-items: center;
+}
+.c-b{
+  color: #000;
+}
+.cursor-p{
+  cursor: pointer;
+}
+.left-right-layout{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+

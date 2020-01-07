@@ -1,14 +1,20 @@
 <template>
   <div class="blankDialog-comp-ct">
     <el-dialog
+      @close="handleClose"
+      :width="contentWidth+'px'"
       :visible.sync="showDialog">
       <div
+        class="content"
         :style="{
-          width: contentWidth + 'px',
-          height: contentHeight + 'px'
+          background: bg,
+          height: contentHeight + 'px',
+          contentWidth: contentWidth + 'px',
+          padding: padding + 'px'
          }"
       >
-        <slot></slot>
+          <div class="title">{{ dTitle }}</div>
+          <slot></slot>
       </div>
     </el-dialog>
   </div>
@@ -17,22 +23,38 @@
 export default {
   name: 'blankDialog',
   props: {
+    bg: {
+      type: String,
+      default: '#fff'
+    },
     contentWidth: {
       type: Number,
-      default: 800
+      default: 720
+    },
+    padding: {
+      type: Number,
+      default: 48
     },
     contentHeight: {
       type: Number,
-      default: 607
+      default: 300
     },
     value: {
       type: Boolean,
       default: false
+    },
+    dTitle: {
+      type: String
     }
   },
   data () {
     return {
       showDialog: true
+    }
+  },
+  methods: {
+    handleClose () {
+      this.$emit('close')
     }
   },
   watch: {
@@ -55,7 +77,7 @@ export default {
 <style lang="scss">
 .blankDialog-comp-ct{
   .el-dialog{
-    width: 800px;
+   /* width: 800px;*/
     .el-dialog__header{
       padding: 0;
       margin: 0;
@@ -73,6 +95,15 @@ export default {
 </style>
 <style lang="scss" scoped>
 .blankDialog-comp-ct {
-
+  .content{
+    box-sizing: border-box;
+    overflow: auto;
+    /*padding: 48px;*/
+    .title{
+      margin-bottom: 16px;
+      font-size: 24px;
+      color: rgba(33, 33, 33, 1);
+    }
+  }
 }
 </style>

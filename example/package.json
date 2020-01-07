@@ -10,6 +10,7 @@
   "dependencies": {
     "core-js": "^3.4.4",
     "element-ui": "^2.13.0",
+    "uuid": "^3.3.3",
     "vue": "^2.6.10"
   },
   "devDependencies": {
