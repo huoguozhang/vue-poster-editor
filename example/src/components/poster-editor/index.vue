@@ -10,7 +10,7 @@
           轻点元素开始编辑
         </div>
         <div class="right">
-          <el-tooltip class="item" effect="dark" content="添加文本组件" placement="top-start">
+          <el-tooltip class="item m-r-16" effect="dark" content="添加文本组件" placement="top-start">
             <span @click="addWidget" class="cursor-p">
               <i class="el-icon-document"></i>
             </span>
@@ -22,21 +22,6 @@
           </el-tooltip>
         </div>
       </div>
-      <!--<div
-        ref="posterContent"
-        :style="{
-        transform: `scale(${dZoom}) translateX(-50%)`
-        }"
-        class="poster-content m-b-16"
-      >
-        <widget
-          :class="{disabled: !item.active}"
-          @click.native = "handleActiveWidget(item)"
-          :widget-data="item"
-          :d-zoom="dZoom"
-          :key="item.uuid"
-          v-for="item in widgetList"></widget>
-      </div>-->
       <draggable
         ref="posterContent"
         v-bind="getOptions()"
@@ -226,7 +211,7 @@
         </el-tab-pane>
       </el-tabs>
     </div>
-    <blankDialog v-model="showImageSelection" :contentHeight="500">
+    <blankDialog v-model="showImageSelection" :content-height="300">
       <imageSelection @success="changeBackground" @cancel="showImageSelection=false" v-model="value"></imageSelection>
     </blankDialog>
   </div>
@@ -240,7 +225,7 @@ import { Loading } from 'element-ui'
 import alignSelect from './alignSelect'
 import widget from './widget'
 import blankDialog from '@/components/blankDialog'
-import imageSelection from './imageSelection'
+import imageSelection from '@/components/imageSelection'
 let zIndex = 0
 const defaultWidgetStyle = {
   top: 0,

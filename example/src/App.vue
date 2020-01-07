@@ -62,7 +62,7 @@
 </template>
 
 <script>
-import posterEditor from '../../src/index.js'
+import posterEditor from '@/components/poster-editor/index.vue'
 import blankDialog from '@/components/blankDialog'
 import imageSelection from '@/components/imageSelection'
 import widgetView from './widgetView'
@@ -82,6 +82,28 @@ export default {
     }
   },
   methods: {
+    getEditorList () {
+      this.editorList = [{
+        'name': '蜘蛛侠',
+        'active': false,
+        'content': {
+          'background': '/img/2.774bb612.jpg',
+          'material_uid': '79b5ff3f-ab9a-4384-9904-aa96338202d2',
+          'materialType': '__vue_devtool_undefined__',
+          'widgetList': []
+        }
+      }, {
+        'name': '美国队长',
+        'active': false,
+        'content': {
+          'background': '/img/3.f130f8e7.jpg',
+          'material_uid': 'a32c6558-1130-4e45-8d0d-efc6f887be50',
+          'materialType': '__vue_devtool_undefined__',
+          'widgetList': []
+        }
+      }]
+      this.handleEditorClick(0)
+    },
     handleEditorClick (i, b) {
       if (b) {
         console.log('外面的')
@@ -183,7 +205,7 @@ export default {
     }
   },
   created () {
-    // this.getThemePoster()
+    this.getEditorList()
   }
 }
 </script>

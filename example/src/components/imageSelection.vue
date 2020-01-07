@@ -5,7 +5,6 @@
       <div class="right">
         <el-input
           clearable
-          @change="getDataFn"
           v-model="search"
           placeholader="搜索内容"
           class="width-200" size="mini"  suffix-icon="el-icon-search">
@@ -89,72 +88,6 @@ export default {
     }
   },
   methods: {
-    wrapResults (results, expandType) {
-      const tagMap = {}
-      const r = results.map(v => {
-        v.expandType = expandType.value
-        v.tag.forEach(t => {
-          const key = t.uid
-          if (tagMap[key]) {
-            tagMap[key]++
-          } else {
-            tagMap[key] = 1
-          }
-        })
-        if (expandType.value === 2) v.path = this.host + v.path
-        return v
-      })
-      expandType.childs.forEach(child => {
-        child.total = tagMap[child.uid] || 0
-      })
-      return r
-    },
-    getSystemMaterialList () {
-      let params = {
-        search: this.search
-      }
-      if (this.tagSelect) params.tag_id = this.tagSelect
-      return global.dataFactory.getSystemMaterialList(params).then(res => {
-        this.types.system.count = res.data.data.count
-        this.systemMaterialList = this.wrapResults(res.data.data.results, this.types.system)
-      })
-    },
-    getThemeMaterialList () {
-      let params = {
-        search: this.search
-      }
-      if (this.tagSelect) params.tag_id = this.tagSelect
-      return global.dataFactory.getThemeMaterialList(params).then(res => {
-        if (res.data.code === 0) {
-          this.types.school.count = res.data.data.count
-          this.materialList = this.wrapResults(res.data.data.results, this.types.school)
-        }
-      })
-    },
-    async getAllTag () {
-      return Promise.all([global.dataFactory.getSystemMaterialTagList().then(res => {
-        this.types.system.childs = res.data.data.results
-      }),
-      global.dataFactory.getThemeMaterialTagList().then(res => {
-        this.types.school.childs = res.data.data.results
-      })
-      ])
-    },
-    expandChange (activeNames) {
-      this.tagSelect = ''
-      if (activeNames.length === 0) {
-        this.imageList = []
-        return
-      }
-      if (activeNames.length > 1) {
-        this.expandTypes.shift()
-      }
-      this.imageList = activeNames[0] === 1 ? this.systemMaterialList : this.materialList
-    },
-    handleTagClick (tag) {
-      this.tagSelect = tag.uid
-      this.getDataFn()
-    },
     handleClickImageItem (i, item) {
       this.isSingle ? this.singleModeClick(i, item) : this.multipleModeClick(i, item)
     },
@@ -183,39 +116,12 @@ export default {
         this.$message.error('请选择图片!')
         return false
       }
-      const tasks = []
-      if (this.expandTypes.includes(1)) {
-        imageSelection.forEach(v => {
-          tasks.push(
-            global.dataFactory.changeMaterialOrigin({ material_id: v.uid }).then(res => {
-              v.path = this.host + res.data.data.path
-            })
-          )
-        })
-      }
-      await Promise.all(tasks)
       this.$emit('success', this.isSingle ? imageSelection[0] : imageSelection)
       this.reset()
     },
     cancel () {
       this.$emit('cancel')
       this.reset()
-    },
-    findBackground () {
-      (this.value.expandType === 2 ? this.materialList : this.systemMaterialList).some(v => {
-        if (v.uid === this.value.material_uid) v.active = true
-      })
-      console.log(this.value)
-    },
-    async getDataFn () {
-      if (this.expandTypes.includes(1)) {
-        await this.getSystemMaterialList()
-        this.imageList = this.systemMaterialList
-      }
-      if (this.expandTypes.includes(2)) {
-        await this.getThemeMaterialList()
-        this.imageList = this.materialList
-      }
     }
   },
   watch: {
@@ -224,11 +130,6 @@ export default {
     }
   },
   async created () {
-    this.getAllTag()
-    await this.getThemeMaterialList()
-    await this.getSystemMaterialList()
-    this.imageList = this.systemMaterialList
-    if (this.value) this.findBackground()
   }
 }
 </script>
@@ -237,6 +138,7 @@ export default {
     box-sizing: border-box;
   }
 .image-selection-comp{
+  position: relative;
   .header-ct{
     display: flex;
     justify-content: space-between;
@@ -318,8 +220,13 @@ export default {
     }
   }
   .bottom-ct{
+    /*position: absolute;
+    left: 0;
+    bottom: 0;*/
+    margin-top: 32px;
     display: flex;
     justify-content: flex-end;
+    width: 100%;
   }
 }
 </style>
