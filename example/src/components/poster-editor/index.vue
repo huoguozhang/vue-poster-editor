@@ -2,17 +2,22 @@
   <div class="poster-editor-comp" :id="editorUid">
     <div class="main-pane" :style="{minHeight: 720 * dZoom + 58 + 'px' }">
       <div class="header-ct">
-        <div class="left">
-          <!--<i class="el-icon-back"></i>
-          <i class="el-icon-right"></i>-->
-        </div>
+        <!--<div class="left">
+          <i class="el-icon-back"></i>
+          <i class="el-icon-right"></i>
+        </div>-->
         <div class="center">
           轻点元素开始编辑
         </div>
         <div class="right">
           <el-tooltip class="item m-r-16" effect="dark" content="添加文本组件" placement="top-start">
-            <span @click="addWidget" class="cursor-p">
+            <span @click="addWidget('text')" class="cursor-p">
               <i class="el-icon-document"></i>
+            </span>
+          </el-tooltip>
+          <el-tooltip class="item m-r-16" effect="dark" content="添加图片组件" placement="top-start">
+            <span @click="showImageSelectionWidget=true" class="cursor-p">
+              <i class="el-icon-picture-outline"></i>
             </span>
           </el-tooltip>
           <el-tooltip class="item" effect="dark" content="编辑背景图" placement="top-start">
@@ -53,16 +58,16 @@
         <el-tab-pane label="当前组件">
           <div v-if="activeWidget" class="style-setting-ct">
             <el-collapse v-model="activeNames">
-              <el-collapse-item title="文本内容" name="1">
+              <el-collapse-item v-if="activeWidget.setDataRange.content.show" title="文本内容" name="1">
                 <div class="style-config m-r-16">
                   <el-input v-model="activeWidget.content" type="textarea"></el-input>
                 </div>
               </el-collapse-item>
-              <el-collapse-item title="组件样式" name="2">
+              <el-collapse-item v-if="activeWidget.setDataRange.box.show" title="组件样式" name="2">
                 <div class="style-config">
-              <span class="label">
-                X
-              </span>
+                    <span class="label">
+                      X
+                    </span>
                   <el-input-number
                     :precision="0"
                     v-model="activeWidget.style.left"
@@ -70,8 +75,8 @@
                     :controls="false"
                     size="mini"></el-input-number>
                   <span class="label">
-               Y
-              </span>
+                     Y
+                  </span>
                   <el-input-number
                     :precision="0"
                     v-model="activeWidget.style.top"
@@ -80,31 +85,33 @@
                     size="mini"></el-input-number>
                 </div>
                 <div class="style-config">
-              <span class="label">
-                宽度
-              </span>
+                  <span class="label">
+                    宽度
+                  </span>
                   <el-input-number
                     v-model="activeWidget.style.width"
                     class="w-60" :controls="false" size="mini"></el-input-number>
                   <span class="label">
-                高度
-              </span>
+                     高度
+                   </span>
                   <el-input-number
                     v-model="activeWidget.style.height"
                     class="w-60" :controls="false" size="mini"></el-input-number>
                 </div>
                 <div class="style-config">
-              <span class="label">
-                背景色
-              </span>
-                  <el-color-picker
-                    v-model="activeWidget.style.background"
-                    class="w-60"
-                    show-alpha
-                    size="mini"></el-color-picker>
+                  <template v-if="activeWidget.setDataRange.box.detail.background">
+                    <span class="label">
+                     背景色
+                    </span>
+                    <el-color-picker
+                      v-model="activeWidget.style.background"
+                      class="w-60"
+                      show-alpha
+                      size="mini"></el-color-picker>
+                  </template>
                   <span class="label">
-                层级
-              </span>
+                   层级
+                  </span>
                   <el-input-number
                     disabled
                     :value="activeWidget.style.zIndex"
@@ -119,25 +126,25 @@
                    {{activeWidget.style.textAlign}}-->
                 </div>
               </el-collapse-item>
-              <el-collapse-item title="字体样式" name="3">
+              <el-collapse-item v-if="activeWidget.setDataRange.innerStyle.show" title="字体样式" name="3">
                 <div class="style-config">
-              <span class="label">
-                大小
-              </span>
+                  <span class="label">
+                    大小
+                  </span>
                   <el-input-number
                     v-model="activeWidget.style.fontSize"
                     class="w-60" :controls="false" size="mini"></el-input-number>
                   <span class="label">
-                行高
-              </span>
+                    行高
+                  </span>
                   <el-input-number
                     v-model="activeWidget.style.lineHeight"
                     class="w-60" :controls="false" size="mini"></el-input-number>
                 </div>
                 <div class="style-config">
-              <span class="label">
-                  字距
-              </span>
+                  <span class="label">
+                    字距
+                  </span>
                   <el-input-number
                     v-model="activeWidget.style.letterSpacing"
                     class="w-60" :controls="false" size="mini"></el-input-number>
@@ -161,9 +168,9 @@
                    <el-input-number class="w-60" :controls="false" size="mini"></el-input-number>-->
                 </div>
                 <div class="style-config">
-              <span class="label">
-                对齐
-              </span>
+                 <span class="label">
+                   对齐
+                  </span>
                   <align-select v-model="activeWidget.style.align"></align-select>
                 </div>
                 <div class="style-config">
@@ -192,11 +199,11 @@
                 :key="item.uuid"
                 v-for="(item) in sortWidgetList"
                 class="widget-list-item item">
-                <div class="view" :style="{background: item.style.background}"></div>
+                <div class="view" :style="{background: item.type === 'text' ? item.style.background : `url(${item.content})`}"></div>
                 <div class="m-l-16 desc">
-                  文本图层
+                  {{item.label}}图层
                 </div>
-                <div style="font-size: 14px;flex: 1;" class="m-l-16 single-row-ellipsis">
+                <div v-if="item.type === 'text'" style="font-size: 14px;flex: 1;" class="m-l-16 single-row-ellipsis">
                   {{item.content}}
                 </div>
               </div>
@@ -211,8 +218,11 @@
         </el-tab-pane>
       </el-tabs>
     </div>
-    <blankDialog v-model="showImageSelection" :content-height="300">
-      <imageSelection @success="changeBackground" @cancel="showImageSelection=false" v-model="value"></imageSelection>
+    <blankDialog v-model="showImageSelection" :content-height="540" :content-width="760">
+      <imageSelection isSingle @success="changeBackground" @cancel="showImageSelection=false" v-model="value"></imageSelection>
+    </blankDialog>
+    <blankDialog v-model="showImageSelectionWidget" :content-height="540" :content-width="760">
+      <imageSelection isSingle @success="beforeAddImgWidget" @cancel="showImageSelectionWidget" v-model="value"></imageSelection>
     </blankDialog>
   </div>
 </template>
@@ -226,26 +236,9 @@ import alignSelect from './alignSelect'
 import widget from './widget'
 import blankDialog from '@/components/blankDialog'
 import imageSelection from '@/components/imageSelection'
+import { setDataRangeMap, defaultDataMap } from './widgetInitDataMap'
+
 let zIndex = 0
-const defaultWidgetStyle = {
-  top: 0,
-  left: 0,
-  height: 40,
-  width: 100,
-  align: {
-    x: 2,
-    y: 2
-  },
-  // textAlign: 'center',
-  lineHeight: 14,
-  fontSize: 14,
-  background: 'rgba(0, 0, 0, 0)',
-  color: 'rgba(0, 0, 0, 1)',
-  letterSpacing: 0,
-  isOblique: false,
-  isBold: false
-  // zIndex: zIndex
-}
 
 export default {
   name: 'posterEditor',
@@ -281,23 +274,59 @@ export default {
       dZoom: 0.52,
       isDragging: false,
       activeNames: ['1', '2', '3', '4', '5', '6'],
-      widgetList: [],
+      widgetList: [
+        {
+          label: '图片',
+          type: 'img',
+          content: require('../../assets/image/6.jpg'),
+          uuid: '32a73470-cfc1-4b1a-9daf-c1f59275c022',
+          active: true,
+          style: {
+            'top': 147,
+            'left': 219,
+            'height': 160,
+            'width': 240,
+            'align': { 'x': 2, 'y': 2 },
+            'lineHeight': 14,
+            'fontSize': 14,
+            'background': 'rgba(0, 0, 0, 0)',
+            'color': 'rgba(0, 0, 0, 1)',
+            'letterSpacing': 0,
+            'isOblique': false,
+            'isBold': false,
+            'zIndex': 1
+          },
+          setDataRange: setDataRangeMap.img
+        }
+      ],
       dragStartPosition: null,
       widgetDragStart: null, // 当前拖的是哪个文本图层 便于后期交互值
       handleResizeFn: null,
-      showImageSelection: false
+      showImageSelection: false,
+      showImageSelectionWidget: false
     }
   },
   methods: {
-    addWidget () {
+    beforeAddImgWidget (imgObj) {
+      this.addWidget('img', imgObj.path)
+      this.showImageSelectionWidget = false
+    },
+    addWidget (type, path) {
+      debugger
       zIndex++
+      const typeLabelMap = {
+        text: '文本',
+        img: '图片'
+      }
       let item = {
-        type: 'text',
-        content: '文本' + zIndex,
+        label: typeLabelMap[type],
+        type,
+        content: type === 'text' ? '文本' + zIndex : path,
         uuid: uuid(),
         active: false,
+        setDataRange: setDataRangeMap[type],
         style: {
-          ...defaultWidgetStyle,
+          ...defaultDataMap[type],
           zIndex
         }
       }
@@ -422,14 +451,6 @@ export default {
         v.style.zIndex = i + 1
       })
     }
-    /* value: {
-      deep: true,
-      handler (val) {
-        if (val.widgetList !== this.widgetList) {
-          this.widgetList = val.widgetList
-        }
-      }
-    } */
   },
   mounted () {
     this.getDZoom()
@@ -440,7 +461,7 @@ export default {
     window.removeEventListener('resize', this.handleResizeFn)
   },
   created () {
-    this.widgetList = this.value.widgetList || []
+    // this.widgetList = this.value.widgetList || []
   }
 }
 </script>
@@ -546,6 +567,7 @@ export default {
           margin-left: 40px;
           width: 24px;
           height: 18px;
+          background-size: 100% 100% !important;
           border: 1px solid rgba(0,0,0,0.3);
         }
         .desc{

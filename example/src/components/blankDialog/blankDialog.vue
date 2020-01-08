@@ -37,7 +37,7 @@ export default {
     },
     contentHeight: {
       type: Number,
-      default: 300
+      default: 500
     },
     value: {
       type: Boolean,

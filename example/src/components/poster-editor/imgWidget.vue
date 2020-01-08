@@ -1,11 +1,10 @@
 <template>
-  <div
+  <img
     :style="{
       transform: `scale(${needScale ? dZoom : 1})`
     }"
-    class="text-widget-ct">
-    {{value}}
-  </div>
+    class="img-widget-ct"
+    :src="value"/>
 </template>
 <script>
 export default {
@@ -27,7 +26,9 @@ export default {
 }
 </script>
 <style lang="scss">
-  .text-widget-ct {
+  .img-widget-ct {
+    width: 100%;
+    height: 100%;
     user-select: none;
   }
 </style>

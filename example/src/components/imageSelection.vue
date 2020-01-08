@@ -74,7 +74,12 @@ export default {
         {
           uid: uuid(),
           name: '蚁人',
-          path: require('../assets/image/1.jpg')
+          path: require('../assets/image/5.jpg')
+        },
+        {
+          uid: uuid(),
+          name: '钢铁侠2',
+          path: require('../assets/image/6.jpg')
         }
       ],
       activeIndex: -1,
@@ -125,8 +130,10 @@ export default {
     }
   },
   watch: {
-    value () {
-      this.findBackground()
+    value (val) {
+      if (val) {
+        // this.findBackground()
+      }
     }
   },
   async created () {

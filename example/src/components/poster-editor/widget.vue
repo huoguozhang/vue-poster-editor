@@ -4,7 +4,7 @@
       ...getStyleRaw
     }"
     class="widget-ct cursor-p">
-    <widgetWrapper :show-wrapper="showWrapper" :widget-data="widgetData" :widget-name="widgetName">
+    <widgetWrapper :show-wrapper="showWrapper" :widget-data="widgetData" :widget-name="widgetData.type">
       <component :need-scale="!showWrapper" :d-zoom="dZoom" v-model="widgetData.content" :is="childName"></component>
     </widgetWrapper>
   </div>
@@ -12,15 +12,12 @@
 <script>
 import widgetWrapper from './widgetWrapper'
 import textWidget from './textWidget'
+import imgWidget from './imgWidget'
 export default {
   props: {
     dZoom: {
       type: Number,
       required: true
-    },
-    widgetName: {
-      type: String,
-      default: 'text'
     },
     widgetData: {
       type: Object,
@@ -43,12 +40,13 @@ export default {
       return obj
     },
     childName () {
-      return this.widgetName + 'Widget'
+      return this.widgetData.type + 'Widget'
     }
   },
   components: {
     widgetWrapper,
-    textWidget
+    textWidget,
+    imgWidget
   }
 }
 </script>
