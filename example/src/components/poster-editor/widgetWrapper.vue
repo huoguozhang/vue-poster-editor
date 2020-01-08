@@ -29,6 +29,13 @@ export default {
     showWrapper: {
       type: Boolean,
       default: true
+    },
+    dZoom: {
+      type: Number,
+      required: true
+    },
+    page: {
+      type: Object
     }
   },
   data () {
@@ -81,11 +88,6 @@ export default {
       dActiveWidgetXY: {},
       dResizeWH: {},
       dirs: [],
-      dZoom: 0.52,
-      page: {
-        width: 960,
-        height: 720
-      },
       // 对齐方式
       alignMap: {
         1: 'flex-start',
@@ -151,7 +153,7 @@ export default {
 
       let left = 0
       let top = 0
-      const minWidth = this.widgetData.content.length * target.fontSize
+      const minWidth = 20
       for (let i = 0; i < dirs.length; ++i) {
         let dir = dirs[i]
 

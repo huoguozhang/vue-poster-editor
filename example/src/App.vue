@@ -82,6 +82,9 @@ export default {
     }
   },
   methods: {
+    fn () {
+      console.log('fn')
+    },
     getEditorList () {
       this.editorList = [{
         'name': '蜘蛛侠',
@@ -90,7 +93,99 @@ export default {
           'background': '/img/2.774bb612.jpg',
           'material_uid': '79b5ff3f-ab9a-4384-9904-aa96338202d2',
           'materialType': '__vue_devtool_undefined__',
-          'widgetList': []
+          'widgetList': [
+            {
+              label: '图片',
+              type: 'img',
+              content: require('@/assets/image/6.jpg'),
+              uuid: '32a73470-cfc1-4b1a-9daf-c1f59275c022',
+              active: false,
+              style: {
+                'top': 147,
+                'left': 219,
+                'height': 160,
+                'width': 240,
+                'align': { 'x': 2, 'y': 2 },
+                'lineHeight': 14,
+                'fontSize': 14,
+                'background': 'rgba(0, 0, 0, 0)',
+                'color': 'rgba(0, 0, 0, 1)',
+                'letterSpacing': 0,
+                'isOblique': false,
+                'isBold': false,
+                'zIndex': 1
+              },
+              setDataRange: {
+                box: {
+                  show: true,
+                  detail: {
+                    top: true,
+                    left: true,
+                    height: true,
+                    width: true,
+                    background: false,
+                    zIndex: true
+                  }
+                },
+                content: {
+                  show: false
+                },
+                innerStyle: {
+                  show: false,
+                  detail: {
+                    align: true,
+                    lineHeight: true,
+                    fontSize: true,
+                    color: true,
+                    letterSpacing: true,
+                    isOblique: true,
+                    isBold: true
+                  }
+                }
+              }
+            },
+            {
+              'label': '图片',
+              'type': 'img',
+              'content': '/img/2.774bb612.jpg',
+              'uuid': 'fc0e365c-591c-43c5-8284-b37942fd5ee1',
+              'active': true,
+              'setDataRange': {
+                'box': {
+                  'show': true,
+                  'detail': {
+                    'top': true,
+                    'left': true,
+                    'height': true,
+                    'width': true,
+                    'background': false,
+                    'zIndex': true
+                  }
+                },
+                'content': { 'show': false },
+                'innerStyle': {
+                  'show': false,
+                  'detail': {
+                    'align': true,
+                    'lineHeight': true,
+                    'fontSize': true,
+                    'color': true,
+                    'letterSpacing': true,
+                    'isOblique': true,
+                    'isBold': true
+                  }
+                }
+              },
+              'style': {
+                'top': 0,
+                'left': 0,
+                'height': 160,
+                'width': 240,
+                'align': { 'x': 2, 'y': 2 },
+                'zIndex': 2
+              }
+            }
+          ]
         }
       }, {
         'name': '美国队长',

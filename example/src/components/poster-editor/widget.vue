@@ -4,8 +4,13 @@
       ...getStyleRaw
     }"
     class="widget-ct cursor-p">
-    <widgetWrapper :show-wrapper="showWrapper" :widget-data="widgetData" :widget-name="widgetData.type">
-      <component :need-scale="!showWrapper" :d-zoom="dZoom" v-model="widgetData.content" :is="childName"></component>
+    <widgetWrapper
+      :d-zoom="dZoom"
+      :page="page"
+      :show-wrapper="showWrapper"
+      :widget-data="widgetData"
+      :widget-name="widgetData.type">
+      <component :need-scale="widgetData.type === 'text' && !showWrapper" :d-zoom="dZoom" v-model="widgetData.content" :is="childName"></component>
     </widgetWrapper>
   </div>
 </template>
@@ -26,6 +31,9 @@ export default {
     showWrapper: {
       type: Boolean,
       default: true
+    },
+    page: {
+      type: Object
     }
   },
   computed: {

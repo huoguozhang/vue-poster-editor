@@ -48,9 +48,10 @@
           @dragstart.native="dragStart($event, item)"
           @dragend.native="dragEnd($event, item)"
           :widget-data="item"
+          :page="page"
           :d-zoom="dZoom"
           :key="item.uuid"
-          v-for="item in widgetList"></widget>
+          v-for="(item) in widgetList"></widget>
       </draggable>
     </div>
     <div class="right-pane">
@@ -193,14 +194,18 @@
           <div class="widget-zIndex-config-ct">
             <draggable :sort="false">
               <div
-                title="拖拽调整图层层级"
+                tabindex="0"
                 @dragstart="dragZIndexStart(item)"
                 @drop="dragZIndexEnd(item)"
+                @keyup.delete="deleteWidget(item)"
                 :key="item.uuid"
                 v-for="(item) in sortWidgetList"
                 class="widget-list-item item">
+                <i
+                  @click="deleteWidget(item)"
+                  class="delete-btn el-icon-delete cursor-p"></i>
                 <div class="view" :style="{background: item.type === 'text' ? item.style.background : `url(${item.content})`}"></div>
-                <div class="m-l-16 desc">
+                <div title="拖拽调整图层层级,按delete键或点击删除该图层" class="m-l-16 desc">
                   {{item.label}}图层
                 </div>
                 <div v-if="item.type === 'text'" style="font-size: 14px;flex: 1;" class="m-l-16 single-row-ellipsis">
@@ -274,31 +279,7 @@ export default {
       dZoom: 0.52,
       isDragging: false,
       activeNames: ['1', '2', '3', '4', '5', '6'],
-      widgetList: [
-        {
-          label: '图片',
-          type: 'img',
-          content: require('../../assets/image/6.jpg'),
-          uuid: '32a73470-cfc1-4b1a-9daf-c1f59275c022',
-          active: true,
-          style: {
-            'top': 147,
-            'left': 219,
-            'height': 160,
-            'width': 240,
-            'align': { 'x': 2, 'y': 2 },
-            'lineHeight': 14,
-            'fontSize': 14,
-            'background': 'rgba(0, 0, 0, 0)',
-            'color': 'rgba(0, 0, 0, 1)',
-            'letterSpacing': 0,
-            'isOblique': false,
-            'isBold': false,
-            'zIndex': 1
-          },
-          setDataRange: setDataRangeMap.img
-        }
-      ],
+      widgetList: [],
       dragStartPosition: null,
       widgetDragStart: null, // 当前拖的是哪个文本图层 便于后期交互值
       handleResizeFn: null,
@@ -312,7 +293,6 @@ export default {
       this.showImageSelectionWidget = false
     },
     addWidget (type, path) {
-      debugger
       zIndex++
       const typeLabelMap = {
         text: '文本',
@@ -365,6 +345,18 @@ export default {
       let top = (e.pageY - this.dragStartPosition.pageY) / this.dZoom
       target.left = Math.max(Math.min(left + target.left, this.page.width - target.width), 0)
       target.top = Math.max(Math.min(top + target.top, this.page.height - target.height), 0)
+    },
+    deleteWidget (item) {
+      let index = this.widgetList.findIndex(v => v.uuid === item.uuid)
+      if (index > -1) {
+        this.$confirm(`此操作将永久删除该${item.label}图层, 是否继续?`, '警告', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.widgetList.splice(index, 1)
+        })
+      }
     },
     handleOtherClick (key) {
       this.activeWidget.style[key] = !this.activeWidget.style[key]
@@ -461,7 +453,7 @@ export default {
     window.removeEventListener('resize', this.handleResizeFn)
   },
   created () {
-    // this.widgetList = this.value.widgetList || []
+    this.widgetList = this.value.widgetList || []
   }
 }
 </script>
@@ -558,11 +550,20 @@ export default {
         cursor: move;
       }
       .item{
+        position: relative;
         display: flex;
         align-items: center;
         height: 40px;
         border-bottom: 1px solid #e1e1e1;
         font-size: 14px;
+        .delete-btn{
+          position: absolute;
+          display: none;
+          transition: all 200ms linear;
+        }
+        &:hover .delete-btn{
+          display: block;
+        }
         .view{
           margin-left: 40px;
           width: 24px;
