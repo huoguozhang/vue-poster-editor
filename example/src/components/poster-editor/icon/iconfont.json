@@ -69,11 +69,25 @@
       "unicode_decimal": 58895
     },
     {
+      "icon_id": "8074641",
+      "name": "undo",
+      "font_class": "Undo",
+      "unicode": "e603",
+      "unicode_decimal": 58883
+    },
+    {
       "icon_id": "8229624",
       "name": "垂直居中对齐",
       "font_class": "chuizhijuzhongduiqi",
       "unicode": "e670",
       "unicode_decimal": 58992
+    },
+    {
+      "icon_id": "8756570",
+      "name": "undo",
+      "font_class": "ic_undo",
+      "unicode": "e651",
+      "unicode_decimal": 58961
     }
   ]
 }

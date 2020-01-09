@@ -2,10 +2,18 @@
   <div class="poster-editor-comp" :id="editorUid">
     <div class="main-pane" :style="{minHeight: 720 * dZoom + 58 + 'px' }">
       <div class="header-ct">
-        <!--<div class="left">
-          <i class="el-icon-back"></i>
-          <i class="el-icon-right"></i>
-        </div>-->
+        <div class="left">
+          <el-tooltip effect="dark" content="撤销" placement="top-start">
+            <el-button @click="getHistory(-1)" type="text">
+              <Icon :active="true" class="m-r-16" icon="Undo"></Icon>
+            </el-button>
+          </el-tooltip>
+          <el-tooltip effect="dark" content="前进" placement="top-start">
+            <el-button @click="getHistory(1)" type="text">
+              <Icon :active="true" class="mirror" icon="Undo"></Icon>
+            </el-button>
+          </el-tooltip>
+        </div>
         <div class="center">
           轻点元素开始编辑
         </div>
@@ -242,6 +250,7 @@ import widget from './widget'
 import blankDialog from '@/components/blankDialog'
 import imageSelection from '@/components/imageSelection'
 import { setDataRangeMap, defaultDataMap } from './widgetInitDataMap'
+import Icon from './icon/index'
 
 let zIndex = 0
 
@@ -271,7 +280,8 @@ export default {
     draggable,
     alignSelect,
     blankDialog,
-    imageSelection
+    imageSelection,
+    Icon
   },
   data () {
     return {
@@ -284,7 +294,9 @@ export default {
       widgetDragStart: null, // 当前拖的是哪个文本图层 便于后期交互值
       handleResizeFn: null,
       showImageSelection: false,
-      showImageSelectionWidget: false
+      showImageSelectionWidget: false,
+      widgetHistory: [], // 记录历史记录变动的
+      historyIndex: -1
     }
   },
   methods: {
@@ -298,7 +310,7 @@ export default {
         text: '文本',
         img: '图片'
       }
-      let item = {
+      const item = {
         label: typeLabelMap[type],
         type,
         content: type === 'text' ? '文本' + zIndex : path,
@@ -318,6 +330,7 @@ export default {
         background: this.value.background,
         widgetList: this.widgetList
       })
+      this.pushHistory('add', item)
     },
     handleActiveWidget (item) {
       this.widgetList.forEach(w => {
@@ -383,7 +396,7 @@ export default {
       }
     },
     // 上传当前poster截图
-    uploadCurrentPosterShot () {
+    uploadCurrentPosterShot (cb) {
       let instance = Loading.service({
         text: '保存中，请稍候！',
         background: 'rgba(0, 0, 0, 0.5)'
@@ -400,24 +413,19 @@ export default {
             useCORS: true,
             // 编辑器缩放保持 960 * 720 的尺寸
             scale: 1 / this.dZoom
-          }).then(canvas => {
+          }).then(async canvas => {
             console.timeEnd('1')
             console.time('2')
             let file = canvas.toDataURL('image/jpeg', 1).replace('data:image/jpeg;base64,', '')
-            let params = {
-              name: 'posterShot' + this.editorUid,
-              category: 'image',
-              content_type: 'JPEG',
-              file
-            }
+            // base64的图片
             console.timeEnd('2')
             console.time('3')
-            global.dataFactory.uploadBase64Img(params).then(res => {
+            if (cb) {
+              await cb(file, resolve)
               console.timeEnd('3')
-              console.log('内部截图完成', res.data.data.path)
-              resolve(res.data.data.path)
+              console.log('截图完成')
               instance.close()
-            })
+            }
           })
         })
       })
@@ -427,6 +435,48 @@ export default {
       this.value.material_uid = imgObj.uid
       this.value.materialType = imgObj.expandType
       this.showImageSelection = false
+    },
+    pushHistory (type, item) {
+      switch (type) {
+        case 'add':
+          this.widgetHistory.push(
+            {
+              type: 'add',
+              uuid: item.uuid
+            }
+          )
+          this.historyIndex = this.widgetHistory.length
+          break
+        case 'delete':
+          this.widgetHistory.push(
+            {
+              type: 'add',
+              uuid: item.uuid,
+              item
+            }
+          )
+          this.historyIndex = this.widgetHistory.length
+          break
+        case 'modify':
+          break
+      }
+    },
+    getHistory (num) {
+      this.historyIndex += num
+      let historyObj = this.widgetHistory[this.historyIndex]
+      switch (historyObj.type) {
+        case 'add':
+          let index = this.widgetList.findIndex(v => v.uuid === historyObj.uuid)
+          if (index > -1) {
+            this.widgetList.splice(index, 1)
+            this.$emit('input', {
+              background: this.value.background,
+              widgetList: this.widgetList
+            })
+          }
+          break
+      }
+      // this.widgetHistory[this.historyIndex - 1]
     }
   },
   computed: {
@@ -438,10 +488,20 @@ export default {
     }
   },
   watch: {
-    widgetList (val) {
-      val.forEach((v, i) => {
-        v.style.zIndex = i + 1
-      })
+    widgetList: {
+      handler (val) {
+        zIndex = val.length
+        console.log(zIndex)
+        val.forEach((v, i) => {
+          v.style.zIndex = i + 1
+        })
+      }
+    },
+    'value.widgetList': {
+      handler (val) {
+        this.widgetList = val
+      },
+      deep: true
     }
   },
   mounted () {
@@ -476,7 +536,9 @@ export default {
       .left{
         display: flex;
         align-items: center;
-        width: 200px;
+        .mirror{
+          transform: rotateY(180deg);
+        }
       }
       .center{
         flex: 1;

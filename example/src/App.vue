@@ -199,10 +199,7 @@ export default {
       }]
       this.handleEditorClick(0)
     },
-    handleEditorClick (i, b) {
-      if (b) {
-        console.log('外面的')
-      }
+    handleEditorClick (i) {
       if (this.activeEditorIndex > -1) {
         let oldItem = this.editorList[this.activeEditorIndex]
         this.$set(this.editorList, this.activeEditorIndex, { ...oldItem, active: false })
@@ -247,20 +244,22 @@ export default {
           fn: e.uploadCurrentPosterShot,
           index: e.order
         })
-        /* tasks1.push(e.uploadCurrentPosterShot().then((path) => {
-          console.log(path)
-          listData[e.order].path = path
-        })) */
       })
       while (tasks1.length) {
         let current = tasks1.shift()
-        await current.fn().then((path) => {
+        await current.fn((file, done) => {
+          return new Promise(resolve => {
+            console.log('截图成功', file)
+            done('file')
+            resolve('file')
+          })
+        }).then((path) => {
           listData[current.index].path = path
         })
       }
       await Promise.all(tasks1)
       this.editorList = listData
-      const tasks2 = []
+      /* const tasks2 = []
       let fnMap = {
         update: global.dataFactory.updateThemePoster,
         create: global.dataFactory.createThemePoster
@@ -280,7 +279,7 @@ export default {
         console.log(args)
       })
       await Promise.all(tasks2)
-      console.log('请求完成')
+      console.log('请求完成') */
       this.handleEditorClick(activeEditorIndex)
     },
     // 获取主题海报
