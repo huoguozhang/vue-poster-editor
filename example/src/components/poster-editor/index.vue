@@ -4,13 +4,13 @@
       <div class="header-ct">
         <div class="left">
           <el-tooltip effect="dark" content="撤销" placement="top-start">
-            <el-button @click="getHistory(-1)" type="text">
-              <Icon :active="true" class="m-r-16" icon="Undo"></Icon>
+            <el-button :disabled="!canClickPrev" @click="getHistory(-1)" type="text">
+              <Icon :active="canClickPrev" class="m-r-16" icon="Undo"></Icon>
             </el-button>
           </el-tooltip>
           <el-tooltip effect="dark" content="前进" placement="top-start">
-            <el-button @click="getHistory(1)" type="text">
-              <Icon :active="true" class="mirror" icon="Undo"></Icon>
+            <el-button :disabled="!canClickNext" @click="getHistory(1)" type="text">
+              <Icon :active="canClickNext" class="mirror" icon="Undo"></Icon>
             </el-button>
           </el-tooltip>
         </div>
@@ -55,11 +55,13 @@
           @click.native = "handleActiveWidget(item)"
           @dragstart.native="dragStart($event, item)"
           @dragend.native="dragEnd($event, item)"
+          @modify="pushHistory"
           :widget-data="item"
+          :order="index"
           :page="page"
           :d-zoom="dZoom"
           :key="item.uuid"
-          v-for="(item) in widgetList"></widget>
+          v-for="(item, index) in widgetList"></widget>
       </draggable>
     </div>
     <div class="right-pane">
@@ -313,7 +315,7 @@ export default {
       const item = {
         label: typeLabelMap[type],
         type,
-        content: type === 'text' ? '文本' + zIndex : path,
+        content: type === 'text' ? '文本' : path,
         uuid: uuid(),
         active: false,
         setDataRange: setDataRangeMap[type],
@@ -368,6 +370,7 @@ export default {
           type: 'warning'
         }).then(() => {
           this.widgetList.splice(index, 1)
+          this.pushHistory('delete', item)
         })
       }
     },
@@ -436,47 +439,64 @@ export default {
       this.value.materialType = imgObj.expandType
       this.showImageSelection = false
     },
-    pushHistory (type, item) {
-      switch (type) {
+    pushHistory (type, item, index) {
+      const obj = {
+        uuid: item.uuid,
+        item,
+        index,
+        type
+      }
+      if (this.canClickNext) {
+        // 已经执行过撤销的操作了 再添加历史记录把后面的删除掉
+        this.widgetHistory.length = this.historyIndex + 1
+      }
+      this.widgetHistory.push(obj)
+      this.historyIndex = this.widgetHistory.length - 1
+      /* switch (type) {
         case 'add':
-          this.widgetHistory.push(
-            {
-              type: 'add',
-              uuid: item.uuid
-            }
-          )
-          this.historyIndex = this.widgetHistory.length
+          obj.type = 'add'
+
+          this.historyIndex = this.widgetHistory.length - 1
           break
         case 'delete':
-          this.widgetHistory.push(
-            {
-              type: 'add',
-              uuid: item.uuid,
-              item
-            }
-          )
+          obj.type = 'delete'
+          this.widgetHistory.push(obj)
           this.historyIndex = this.widgetHistory.length
           break
         case 'modify':
           break
-      }
+      } */
     },
     getHistory (num) {
-      this.historyIndex += num
-      let historyObj = this.widgetHistory[this.historyIndex]
-      switch (historyObj.type) {
-        case 'add':
-          let index = this.widgetList.findIndex(v => v.uuid === historyObj.uuid)
-          if (index > -1) {
-            this.widgetList.splice(index, 1)
-            this.$emit('input', {
-              background: this.value.background,
-              widgetList: this.widgetList
-            })
-          }
-          break
+      console.log(num, this.canClickPrev, this.canClickNext)
+      if ((num < 0 && this.canClickPrev) || (num > 0 && this.canClickNext)) {
+        if (num > 0) this.historyIndex += num
+        let historyObj = this.widgetHistory[this.historyIndex]
+        switch (historyObj.type) {
+          case 'add':
+            // 撤回操作
+            if (num < 0) {
+              let index = this.widgetList.findIndex(v => v.uuid === historyObj.uuid)
+              if (index > -1) {
+                this.widgetList.splice(index, 1)
+              }
+            } else {
+              this.widgetList.push(historyObj.item)
+            }
+            break
+          case 'delete':
+            if (num < 0) {
+              this.widgetList.splice(historyObj.index, 0, historyObj.item)
+            } else {
+              this.widgetList.splice(historyObj.index, 1)
+            }
+            break
+        }
+        if (num < 0) {
+          this.historyIndex += num
+        }
+        // this.widgetHistory[this.historyIndex - 1]
       }
-      // this.widgetHistory[this.historyIndex - 1]
     }
   },
   computed: {
@@ -485,21 +505,34 @@ export default {
     },
     sortWidgetList () {
       return this.widgetList.slice(0).sort((a, b) => b.style.zIndex - a.style.zIndex)
+    },
+    canClickPrev () {
+      // 是否能点击上一步
+      return this.historyIndex > -1
+    },
+    canClickNext () {
+      return this.historyIndex < this.widgetHistory.length - 1 && this.widgetHistory.length > 0
     }
   },
   watch: {
     widgetList: {
       handler (val) {
         zIndex = val.length
-        console.log(zIndex)
+        // console.log(zIndex)
         val.forEach((v, i) => {
           v.style.zIndex = i + 1
+        })
+        this.$emit('input', {
+          background: this.value.background,
+          widgetList: this.widgetList
         })
       }
     },
     'value.widgetList': {
       handler (val) {
-        this.widgetList = val
+        if (val !== this.widgetList) {
+          this.widgetList = val
+        }
       },
       deep: true
     }

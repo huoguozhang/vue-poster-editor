@@ -102,7 +102,7 @@ export default {
               active: false,
               style: {
                 'top': 147,
-                'left': 219,
+                'left': 500,
                 'height': 160,
                 'width': 240,
                 'align': { 'x': 2, 'y': 2 },
@@ -177,8 +177,8 @@ export default {
                 }
               },
               'style': {
-                'top': 0,
-                'left': 0,
+                'top': 200,
+                'left': 200,
                 'height': 160,
                 'width': 240,
                 'align': { 'x': 2, 'y': 2 },
