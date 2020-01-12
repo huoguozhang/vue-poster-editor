@@ -332,7 +332,7 @@ export default {
         background: this.value.background,
         widgetList: this.widgetList
       })
-      this.pushHistory('add', item)
+      this.pushHistory('add', item, this.widgetList.length - 1)
     },
     handleActiveWidget (item) {
       this.widgetList.forEach(w => {
@@ -355,6 +355,7 @@ export default {
       }
     },
     dragEnd (e, item) {
+      console.log('drag end')
       let target = item.style
       let left = (e.pageX - this.dragStartPosition.pageX) / this.dZoom
       let top = (e.pageY - this.dragStartPosition.pageY) / this.dZoom
@@ -370,7 +371,7 @@ export default {
           type: 'warning'
         }).then(() => {
           this.widgetList.splice(index, 1)
-          this.pushHistory('delete', item)
+          this.pushHistory('delete', item, index)
         })
       }
     },
@@ -518,7 +519,6 @@ export default {
     widgetList: {
       handler (val) {
         zIndex = val.length
-        // console.log(zIndex)
         val.forEach((v, i) => {
           v.style.zIndex = i + 1
         })
@@ -526,13 +526,20 @@ export default {
           background: this.value.background,
           widgetList: this.widgetList
         })
-      }
+      },
+      deep: true
     },
     'value.widgetList': {
       handler (val) {
         if (val !== this.widgetList) {
           this.widgetList = val
         }
+      },
+      deep: true
+    },
+    'activeWidget.style': {
+      handler (val, oldVal) {
+        console.log(val.top, oldVal.top)
       },
       deep: true
     }

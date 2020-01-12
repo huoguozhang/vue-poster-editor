@@ -58,17 +58,6 @@ export default {
     widgetWrapper,
     textWidget,
     imgWidget
-  },
-  watch: {
-    widgetData: {
-      handler (val) {
-        if (this.hasOwnProperty('order')) {
-          console.log('change', val)
-          this.$emit('modify', 'modify', val, this.order)
-        }
-      },
-      deep: true
-    }
   }
 }
 </script>
