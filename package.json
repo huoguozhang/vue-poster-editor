@@ -1,22 +1,16 @@
 {
-  "name": "vue-poster-editor",
+  "name": "example",
   "version": "0.1.0",
   "private": true,
-  "author": "https://github.com/huoguozhang",
-  "keywords": [
-    "vue",
-    "poster",
-    "海报",
-    "图层",
-    "ps"
-  ],
-  "main": "src/index.js",
-  "scripts": {},
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint"
+  },
   "dependencies": {
     "core-js": "^3.4.4",
     "element-ui": "^2.13.0",
     "html2canvas": "^1.0.0-rc.5",
-    "lodash": "^4.17.15",
     "uuid": "^3.3.3",
     "vue": "^2.6.10",
     "vuedraggable": "^2.23.2"
@@ -30,7 +24,7 @@
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.0.0",
     "node-sass": "^4.13.0",
-    "sass-loader": "^8.0.0",
+    "sass-loader": "^8.0.1",
     "vue-template-compiler": "^2.6.10"
   }
 }

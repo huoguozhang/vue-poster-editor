@@ -54,7 +54,7 @@
           :class="{disabled: !item.active}"
           @click.native = "handleActiveWidget(item)"
           @dragstart.native="dragStart($event, item)"
-          @dragend.native="dragEnd($event, item)"
+          @dragend.native="dragEnd($event, item, index)"
           @modify="pushHistory"
           :widget-data="item"
           :order="index"
@@ -295,6 +295,7 @@ export default {
       dragStartPosition: null,
       widgetDragStart: null, // 当前拖的是哪个文本图层 便于后期交互值
       handleResizeFn: null,
+      handleActiveWidgetChange: null,
       showImageSelection: false,
       showImageSelectionWidget: false,
       widgetHistory: [], // 记录历史记录变动的
@@ -354,13 +355,17 @@ export default {
         pageY: e.pageY
       }
     },
-    dragEnd (e, item) {
-      console.log('drag end')
+    dragEnd (e, item, index) {
+      item.history = {
+        content: item.content,
+        style: _.cloneDeep(item.style)
+      }
       let target = item.style
       let left = (e.pageX - this.dragStartPosition.pageX) / this.dZoom
       let top = (e.pageY - this.dragStartPosition.pageY) / this.dZoom
       target.left = Math.max(Math.min(left + target.left, this.page.width - target.width), 0)
       target.top = Math.max(Math.min(top + target.top, this.page.height - target.height), 0)
+      this.pushHistory('modify', item, index)
     },
     deleteWidget (item) {
       let index = this.widgetList.findIndex(v => v.uuid === item.uuid)
@@ -427,7 +432,6 @@ export default {
             if (cb) {
               await cb(file, resolve)
               console.timeEnd('3')
-              console.log('截图完成')
               instance.close()
             }
           })
@@ -469,7 +473,6 @@ export default {
       } */
     },
     getHistory (num) {
-      console.log(num, this.canClickPrev, this.canClickNext)
       if ((num < 0 && this.canClickPrev) || (num > 0 && this.canClickNext)) {
         if (num > 0) this.historyIndex += num
         let historyObj = this.widgetHistory[this.historyIndex]
@@ -492,6 +495,16 @@ export default {
               this.widgetList.splice(historyObj.index, 1)
             }
             break
+          case 'modify':
+            if (num < 0) {
+              this.$set(this.widgetList, historyObj.index, {
+                ...historyObj.item,
+                style: historyObj.item.history.style,
+                content: historyObj.item.history.content
+              })
+            } else {
+              this.$set(this.widgetList, historyObj.index, { ...historyObj.item })
+            }
         }
         if (num < 0) {
           this.historyIndex += num
@@ -536,12 +549,6 @@ export default {
         }
       },
       deep: true
-    },
-    'activeWidget.style': {
-      handler (val, oldVal) {
-        console.log(val.top, oldVal.top)
-      },
-      deep: true
     }
   },
   mounted () {
@@ -554,6 +561,12 @@ export default {
   },
   created () {
     this.widgetList = this.value.widgetList || []
+    this.widgetList.forEach(v => {
+      v.history = {
+        content: v.content,
+        style: _.cloneDeep(v.style)
+      }
+    })
   }
 }
 </script>

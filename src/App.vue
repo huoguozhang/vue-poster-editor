@@ -83,7 +83,6 @@ export default {
   },
   methods: {
     fn () {
-      console.log('fn')
     },
     getEditorList () {
       this.editorList = [{
@@ -249,7 +248,7 @@ export default {
         let current = tasks1.shift()
         await current.fn((file, done) => {
           return new Promise(resolve => {
-            console.log('截图成功', file)
+            // console.log('截图成功', file)
             done('file')
             resolve('file')
           })
